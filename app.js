@@ -1,10 +1,8 @@
-const errorSpace = document.getElementById('error');
-
 // FORM ELEMENTS
 const loanForm = document.getElementById('loan-form');
-const amountInputValue = document.getElementById('amount');
-const interestInputValue = document.getElementById('interest');
-const yearsToRepayInputValue = document.getElementById('years');
+const amountInput = document.getElementById('amount');
+const interestInput = document.getElementById('interest');
+const yearsToRepayInput = document.getElementById('years');
 
 // DISPLAY ELEMENTS
 const showMonthlyPayment = document.getElementById('monthly-payment');
@@ -13,29 +11,42 @@ const showTotalInterest = document.getElementById('total-interest');
 
 
 function showError(){ // Creates & appends ERROR BUTTON
+	const card = document.querySelector('.card');
+	const heading = document.querySelector('.heading');
 	const errorButton = document.createElement('button');
-	errorButton.className = "btn btn-danger btn-block py-3 my-3";
+	errorButton.className = "alert btn btn-danger btn-block py-3 my-3";
 	errorButton.innerHTML = "Please check your numbers";
 	errorButton.disabled = true;
-	errorSpace.appendChild(errorButton);
+	card.insertBefore(errorButton, heading);
 	setTimeout(removeErrorInfo, 2000);
 }
 
 function removeErrorInfo(){
-	errorSpace.firstElementChild.remove();
+	document.querySelector('.alert').remove();
 }
 
-loanForm.addEventListener('submit', calculate);
 
-function calculate(e){
+function calculateResults(e){
 	e.preventDefault();
-	if (amountInputValue.value === '' || 
-		interestInputValue.value === '' || 
-		yearsToRepayInputValue.value === ''){
-		showError()
+
+	const principal = parseFloat(amountInput.value);
+	const calculatedInterest = parseFloat(interestInput.value) / 100 / 12;
+	const calculatedPayments = parseFloat(yearsToRepayInput.value) * 12
+
+	// Compute Monthly Payments
+
+	const x = Math.pow(1 + calculatedInterest, calculatedPayments);
+	const monthly = (principal * x * calculatedInterest)/(x - 1);
+
+	if(isFinite(monthly)){
+		showMonthlyPayment.value = monthly.toFixed(2);
+		showTotalPayment.value = (monthly * calculatedPayments).toFixed(2); 
+		showTotalInterest.value = ((monthly * calculatedPayments) - principal).toFixed(2);
+	} else {
+		showError();
 	}
-	showMonthlyPayment.value = amountInputValue.value / 12;
-	showTotalPayment.value = amountInputValue.value * (interestInputValue.value/100) + amountInputValue.value;
-	showTotalInterest.value = 6;
+
 }
 
+// LISTEN FOR SUBMIT
+loanForm.addEventListener('submit', calculateResults);
