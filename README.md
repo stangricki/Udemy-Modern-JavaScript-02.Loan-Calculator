@@ -4,4 +4,6 @@ This loan calculator was made on the basis of the "Modern JavaScript From The Be
 
 https://stangricki.github.io/Udemy-Modern-JavaScript-02.Loan-Calculator/
 
-It uses Bootstrap library and LocalStorage.
+It uses Bootstrap library.
+
+https://getbootstrap.com/
